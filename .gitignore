@@ -1,6 +1,0 @@
-node_modules/
-*.tsbuildinfo
-.DS_Store
-Thumbs.db
-.env*
-/web/dist/

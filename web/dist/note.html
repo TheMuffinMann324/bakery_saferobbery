@@ -1,0 +1,17 @@
+<!doctype html>
+<!-- Sticky note atlas (1024x1024 = 4x4 notes of 256px), drawn on the bkr_sticky_note props by client/note.lua.
+     Cell N (counted along the rows from the top left) is the note bkr_sticky_note_N; cell 0 always stays blank.
+     The codes come in the address (?codes=1:1234,5:9629) and in messages ({ codes: { "1": "1234" } }), always
+     the full set, so a lost message is fixed by the next one. GRID matches the streamed note models. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>html,body{background:#f9de57;width:1024px;height:1024px;margin:0;overflow:hidden}#grid{grid-template-rows:repeat(4,256px);grid-template-columns:repeat(4,256px);display:grid}.note{color:#1e3292;background:linear-gradient(#0000000d 0 18%,#0000 18%),linear-gradient(#f6d850 0%,#fbe25f 30%,#f8dc55 85%,#ead04c 100%);width:256px;height:256px;font-family:Caveat,cursive;font-weight:700;position:relative;overflow:hidden}.label{opacity:.85;font-size:40px;position:absolute;top:56px;left:22px;transform:rotate(-4deg)}.code{justify-content:center;gap:12px;width:100%;font-size:92px;line-height:1;display:flex;position:absolute;top:102px;left:0}.code span:first-child{transform:rotate(-4deg)}.code span:nth-child(2){transform:rotate(3deg)translateY(-4px)}.code span:nth-child(3){transform:rotate(-2deg)translateY(3px)}.code span:nth-child(4){transform:rotate(5deg)}.line{width:190px;position:absolute;bottom:26px;left:24px}</style>
+  <script type="module" crossorigin src="./assets/note-Ckk6b7rT.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-P2Xu9kJm.js">
+  <link rel="stylesheet" crossorigin href="./assets/note-BW6MFFsy.css">
+</head>
+<body>
+  <div id="grid"></div>
+</body>
+</html>
