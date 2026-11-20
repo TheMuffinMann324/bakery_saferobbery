@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; }
+  body { color: #fff; display: flex; align-items: center; padding: 8px; }
+  main { display: grid; gap: 7px; filter: drop-shadow(0 2px 3px #0b0c0f); }
+  [hidden] { display: none !important; }
+  .row { display: flex; align-items: center; gap: 12px; min-height: 40px; max-width: 496px; white-space: nowrap; }
+  .key {
+    position: relative; display: grid; place-items: center; flex: none; width: 40px; height: 40px;
+    border-radius: 50%; color: #111317; background: #fff; font: 800 27px/1 Arial, sans-serif;
+  }
+  .key--hold::before {
+    content: ''; position: absolute; inset: -5px; border-radius: 50%;
+    background: conic-gradient(#fff var(--progress, 0%), #ffffff73 var(--progress, 0%));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 2.5px));
+  }
+  .label, #title { font: 30px/1.1 Anton, sans-serif; letter-spacing: 0.045em; text-transform: uppercase; }
+  #title { max-width: 488px; overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+  <div id="title" hidden></div>
+  <div id="primary" class="row" hidden>
+    <span class="key">G</span><span id="action" class="label"></span>
+  </div>
+  <div id="charge" class="row" hidden>
+    <span id="ring" class="key key--hold">G</span><span class="label">Hold to plant explosives</span>
+  </div>
+</main>
+<script type="module">
+  import '@fontsource/anton/latin-400.css'
+
+  const title = document.getElementById('title')
+  const primary = document.getElementById('primary')
+  const action = document.getElementById('action')
+  const charge = document.getElementById('charge')
+  const ring = document.getElementById('ring')
+
+  window.addEventListener('message', ({ data }) => {
+    if (typeof data === 'string') {
+      try { data = JSON.parse(data) } catch { return }
+    }
+    if (!data || typeof data !== 'object') return
+    title.textContent = data.title || ''
+    title.hidden = !data.title
+    action.textContent = data.action || ''
+    primary.hidden = !data.action
+    charge.hidden = data.charge !== true
+    ring.style.setProperty('--progress', Math.max(0, Math.min(100, Number(data.progress) || 0)) + '%')
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<!-- Sticky note atlas (1024x1024 = 4x4 notes of 256px), drawn on the bkr_sticky_note props by client/note.lua.
+     Cell N (counted along the rows from the top left) is the note bkr_sticky_note_N; cell 0 always stays blank.
+     The codes come in the address (?codes=1:1234,5:9629) and in messages ({ codes: { "1": "1234" } }), always
+     the full set, so a lost message is fixed by the next one. GRID matches the streamed note models. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; width: 1024px; height: 1024px; overflow: hidden; background: #f9de57; }
+  #grid { display: grid; grid-template-columns: repeat(4, 256px); grid-template-rows: repeat(4, 256px); }
+  .note {
+    position: relative; width: 256px; height: 256px; overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,0.05) 0, rgba(0,0,0,0.05) 18%, transparent 18%),
+      linear-gradient(180deg, #f6d850 0%, #fbe25f 30%, #f8dc55 85%, #ead04c 100%);
+    font-family: 'Caveat', cursive; font-weight: 700; color: #1e3292;
+  }
+  .label { position: absolute; top: 56px; left: 22px; font-size: 40px; transform: rotate(-4deg); opacity: 0.85; }
+  .code { position: absolute; top: 102px; left: 0; width: 100%; display: flex; justify-content: center; gap: 12px; font-size: 92px; line-height: 1; }
+  .code span:nth-child(1) { transform: rotate(-4deg); }
+  .code span:nth-child(2) { transform: rotate(3deg) translateY(-4px); }
+  .code span:nth-child(3) { transform: rotate(-2deg) translateY(3px); }
+  .code span:nth-child(4) { transform: rotate(5deg); }
+  .line { position: absolute; left: 24px; bottom: 26px; width: 190px; }
+</style>
+</head>
+<body>
+  <div id="grid"></div>
+  <script type="module">
+    import '@fontsource/caveat/latin-700.css'
+
+    var GRID = 4;
+    var grid = document.getElementById('grid');
+    var cells = [];
+    for (var i = 0; i < GRID * GRID; i++) {
+      var note = document.createElement('div');
+      note.className = 'note';
+      note.innerHTML = '<div class="label">safe</div><div class="code"></div>' +
+        '<svg class="line" viewBox="0 0 200 20"><path d="M2 12 C 50 4, 90 18, 140 9 S 190 12, 198 6" stroke="#1e3292" stroke-width="3" fill="none" opacity="0.8"/></svg>';
+      grid.appendChild(note);
+      cells.push({ el: note.querySelector('.code'), code: null });
+    }
+
+    var codes = {};
+    function draw(force) {
+      for (var i = 1; i < cells.length; i++) {
+        var value = codes[i];
+        var code = typeof value === 'string' && /^[0-9]{4}$/.test(value) ? value : '';
+        if (!force && cells[i].code === code) continue;
+        cells[i].code = code;
+        cells[i].el.textContent = '';
+        code.split('').forEach(function (d) {
+          var s = document.createElement('span');
+          s.textContent = d;
+          cells[i].el.appendChild(s);
+        });
+      }
+    }
+
+    (new URLSearchParams(location.search).get('codes') || '').split(',').forEach(function (pair) {
+      var p = pair.split(':');
+      if (p.length === 2) codes[p[0]] = p[1];
+    });
+    draw(true);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { draw(true); });
+
+    window.addEventListener('message', function (e) {
+      var data = e.data;
+      if (typeof data === 'string') { try { data = JSON.parse(data); } catch (_) { return; } }
+      if (data && data.codes && typeof data.codes === 'object') { codes = data.codes; draw(false); }
+    });
+  </script>
+</body>
+</html>
